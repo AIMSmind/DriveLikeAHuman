@@ -8,11 +8,11 @@ import sqlite3
 
 from typing import Union
 from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
-from langchain.llms import OpenAI
+from langchain.llms import OpenAI,LlamaCpp
 from langchain.agents import initialize_agent, AgentType
 from langchain.memory import ConversationBufferMemory, ConversationTokenBufferMemory
 from langchain.callbacks import get_openai_callback
-from langchain.agents.tools import Tool
+from langchain.tools import Tool
 
 from LLMDriver.callbackHandler import CustomHandler
 from scenario.scenario import Scenario
@@ -21,7 +21,7 @@ from LLMDriver.agent_propmts import SYSTEM_MESSAGE_PREFIX, SYSTEM_MESSAGE_SUFFIX
 
 class DriverAgent:
     def __init__(
-        self, llm: Union[ChatOpenAI, AzureChatOpenAI, OpenAI], toolModels: list, sce: Scenario,
+        self, llm: Union[ChatOpenAI, AzureChatOpenAI, OpenAI, LlamaCpp], toolModels: list, sce: Scenario,
         verbose: bool = False
     ) -> None:
         self.sce = sce
@@ -98,6 +98,9 @@ class DriverAgent:
 
     def exportThoughts(self):
         output = {}
+        print(self.ch.memory)
+        print("FINNNNNNAL" + str(self.ch.memory[-1].split(
+            'Final Answer:')))
         output['thoughts'], output['answer'] = self.ch.memory[-1].split(
             'Final Answer:')
         return output

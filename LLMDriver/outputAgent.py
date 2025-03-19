@@ -1,5 +1,7 @@
 import base64
 import json
+import re
+
 from rich import print
 import sqlite3
 
@@ -13,18 +15,21 @@ from scenario.scenario import Scenario
 
 
 class OutputParser:
-    def __init__(self, sce: Scenario,llm, temperature: float = 0.0) -> None:
+    def __init__(self, sce: Scenario, llm, temperature: float = 0.0) -> None:
         self.sce = sce
         self.temperature = temperature
         self.llm = llm
         # todo: put into a yaml file
         self.response_schemas = [
             ResponseSchema(
-                name="action_id", description=f"output the id(int) of the decision. The comparative table is:  {{ 0: 'change_lane_left', 1: 'keep_speed or idle', 2: 'change_lane_right', 3: 'accelerate or faster',4: 'decelerate or slower'}} . For example, if the ego car wants to keep speed, please output 1 as a int."),
+                name="action_id",
+                description=f"output the id(int) of the decision. The comparative table is:  {{ 0: 'change_lane_left', 1: 'keep_speed or idle', 2: 'change_lane_right', 3: 'accelerate or faster',4: 'decelerate or slower'}} . For example, if the ego car wants to keep speed, please output 1 as a int."),
             ResponseSchema(
-                name="action_name", description=f"output the name(str) of the decision. MUST consist with previous \"action_id\". The comparative table is:  {{ 0: 'change_lane_left', 1: 'keep_speed', 2: 'change_lane_right', 3: 'accelerate',4: 'decelerate'}} . For example, if the action_id is 3, please output 'Accelerate' as a str."),
+                name="action_name",
+                description=f"output the name(str) of the decision. MUST consist with previous \"action_id\". The comparative table is:  {{ 0: 'change_lane_left', 1: 'keep_speed', 2: 'change_lane_right', 3: 'accelerate',4: 'decelerate'}} . For example, if the action_id is 3, please output 'Accelerate' as a str."),
             ResponseSchema(
-                name="explanation", description=f"Explain for the driver why you make such decision in 40 words.")
+                name="explanation",
+                description=f"Explain for the driver why you make such decision in 40 words.")
         ]
         self.output_parser = StructuredOutputParser.from_response_schemas(
             self.response_schemas)
@@ -43,9 +48,18 @@ class OutputParser:
         input = prompt_template.format_prompt(
             answer=final_results['answer']+final_results['thoughts'])
         with get_openai_callback() as cb:
-            output = self.llm(input.to_messages())
+            msgs = input.to_messages()[0]
+            print(msgs)
 
-        self.parseredOutput = self.output_parser.parse(output.content)
+            output = self.llm(str(msgs))
+            pattern = r'json\s*(\{.*?\})\s*'
+            match = re.search(pattern, output, re.DOTALL)
+            if match:
+                output = match.group(1)
+        print("OUTPUT" + output)
+        print("===============================================")
+
+        self.parseredOutput = self.output_parser.parse(output)
         self.dataCommit()
         print("Finish output agent:\n", cb)
         return self.parseredOutput

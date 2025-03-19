@@ -36,7 +36,7 @@ class getAvailableActions:
              description="""Useful before you make decisions, this tool let you know what are your available actions in this situation. The input to this tool should be 'ego'.""")
     def inference(self, input: str) -> str:
         outputPrefix = 'You can ONLY use one of the following actions: \n'
-        availableActions = self.env.get_available_actions()
+        availableActions = self.env.unwrapped.get_available_actions()
         for action in availableActions:
             outputPrefix += ACTIONS_ALL[action] + \
                 '--' + ACTIONS_DESCRIPTION[action] + '; \n'
