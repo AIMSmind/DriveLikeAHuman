@@ -7,22 +7,26 @@ from rich import print
 import sqlite3
 
 from typing import Union
-from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
-from langchain.llms import OpenAI,LlamaCpp
+from langchain_community.chat_models import AzureChatOpenAI, ChatOpenAI
+from langchain_community.llms import OpenAI, LlamaCpp
 from langchain.agents import initialize_agent, AgentType
-from langchain.memory import ConversationBufferMemory, ConversationTokenBufferMemory
-from langchain.callbacks import get_openai_callback
+from langchain.memory import ConversationBufferMemory, \
+    ConversationTokenBufferMemory
+from langchain_community.callbacks.manager import get_openai_callback
 from langchain.tools import Tool
 
 from LLMDriver.callbackHandler import CustomHandler
 from scenario.scenario import Scenario
-from LLMDriver.agent_propmts import SYSTEM_MESSAGE_PREFIX, SYSTEM_MESSAGE_SUFFIX, FORMAT_INSTRUCTIONS, HUMAN_MESSAGE, TRAFFIC_RULES, DECISION_CAUTIONS
+from LLMDriver.agent_propmts import SYSTEM_MESSAGE_PREFIX, \
+    SYSTEM_MESSAGE_SUFFIX, FORMAT_INSTRUCTIONS, HUMAN_MESSAGE, TRAFFIC_RULES, \
+    DECISION_CAUTIONS
 
 
 class DriverAgent:
     def __init__(
-        self, llm: Union[ChatOpenAI, AzureChatOpenAI, OpenAI, LlamaCpp], toolModels: list, sce: Scenario,
-        verbose: bool = False
+            self, llm: Union[ChatOpenAI, AzureChatOpenAI, OpenAI, LlamaCpp],
+            toolModels: list, sce: Scenario,
+            verbose: bool = False
     ) -> None:
         self.sce = sce
         self.ch = CustomHandler()
@@ -101,8 +105,15 @@ class DriverAgent:
         print(self.ch.memory)
         print("FINNNNNNAL" + str(self.ch.memory[-1].split(
             'Final Answer:')))
-        output['thoughts'], output['answer'] = self.ch.memory[-1].split(
+        splitted = self.ch.memory[-1].split(
             'Final Answer:')
+
+        if len(splitted) > 1:
+            output['thoughts'] = splitted[0]
+            output['answer'] = splitted[1]
+        elif len(splitted) == 1:
+            output['thoughts'] = splitted[0]
+            output['answer'] = ""
         return output
 
     def dataCommit(self):

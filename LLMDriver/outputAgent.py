@@ -2,11 +2,12 @@ import base64
 import json
 import re
 
+from langchain_core.messages import AIMessage
 from rich import print
 import sqlite3
 
-from langchain.chat_models import AzureChatOpenAI
-from langchain.callbacks import get_openai_callback
+from langchain_community.chat_models import AzureChatOpenAI
+from langchain_community.callbacks.manager import get_openai_callback
 from langchain.output_parsers import ResponseSchema
 from langchain.output_parsers import StructuredOutputParser
 from langchain.prompts import ChatPromptTemplate, HumanMessagePromptTemplate
@@ -46,20 +47,22 @@ class OutputParser:
             partial_variables={"format_instructions": self.format_instructions}
         )
         input = prompt_template.format_prompt(
-            answer=final_results['answer']+final_results['thoughts'])
+            answer=final_results['answer'] + final_results['thoughts'])
         with get_openai_callback() as cb:
             msgs = input.to_messages()[0]
             print(msgs)
 
-            output = self.llm(str(msgs))
-            pattern = r'json\s*(\{.*?\})\s*'
-            match = re.search(pattern, output, re.DOTALL)
+            output: AIMessage = self.llm.invoke(str(msgs))
+            str_output = output.content
+            print("output content pre parse " + str_output)
+            pattern = r'```json\n(.*?)\n```'
+            match = re.search(pattern, str_output, re.DOTALL)
             if match:
-                output = match.group(1)
-        print("OUTPUT" + output)
+                str_output = match.group(1)
+        print("OUTPUT " + str(str_output))
         print("===============================================")
 
-        self.parseredOutput = self.output_parser.parse(output)
+        self.parseredOutput = self.output_parser.parse(str(str_output))
         self.dataCommit()
         print("Finish output agent:\n", cb)
         return self.parseredOutput

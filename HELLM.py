@@ -5,8 +5,10 @@ import yaml
 import numpy as np
 import gymnasium as gym
 from gymnasium.wrappers import RecordVideo
-from langchain.llms import LlamaCpp
-from langchain.chat_models import AzureChatOpenAI, ChatOpenAI
+from langchain_community.llms import LlamaCpp, Ollama
+from langchain_community.chat_models import AzureChatOpenAI, ChatOllama
+from langchain_ollama import ChatOllama
+from langchain_openai import OpenAI
 
 import highway_env
 from scenario.scenario import Scenario
@@ -39,33 +41,42 @@ if OPENAI_CONFIG['OPENAI_API_TYPE'] == 'azure':
     ...
 elif OPENAI_CONFIG['OPENAI_API_TYPE'] == 'openai':
     os.environ["OPENAI_API_KEY"] = OPENAI_CONFIG['OPENAI_KEY']
-    llm = ChatOpenAI(
+    llm = OpenAI(
         temperature=0,
-        model_name='gpt-3.5-turbo-1106',  # or any other model with 8k+ context
+        model='gpt-3.5-turbo-1106',  # or any other model with 8k+ context
         max_tokens=1024,
-        request_timeout=60
+        timeout=60
     )
 
 # base setting
 vehicleCount = 15
-llm = LlamaCpp(
-    n_gpu_layers=-1,
-    model_path="/mnt/a4ceb600-eb8a-411c-ac16-e68b8312a0c5/aims/PycharmProjects/reports-service/language_models/Qwen2.5-7B-Instruct-Q6_K_L.gguf",
-    temperature=0,
-    max_tokens=1024,
-    n_ctx=30000,
-verbose = True
-)
+# llm = LlamaCpp(
+#     n_gpu_layers=-1,
+#     model_path="/mnt/a4ceb600-eb8a-411c-ac16-e68b8312a0c5/aims/PycharmProjects/reports-service/language_models/Llama-3.1-WhiteRabbitNeo-2-8B-Q6_K_L.gguf",
+#     temperature=0,
+#     max_tokens=1024,
+#     n_ctx=30000,
+# verbose = True
+# )
 # available_encodings = tiktoken.list_encoding_names()
 # print("Available encodings:", available_encodings)
 # encoder = tiktoken.get_encoding("o200k_base")
-# llm = ChatOpenAI(openai_api_base="http://localhost:1234/v1",
-#                  openai_api_key="YOUR_API_KEY",
-#                  max_tokens=1024,
-#                  model_name="llama",
-#                  request_timeout=60,
-#                  verbose=True)
+# llm = OpenAI(
+#     base_url="http://192.168.100.91:11434",
+#     api_key="dummy",
+#     max_tokens=1024,
+#     model="qwq",
+#     timeout=60,
+#     verbose=True)
+
+llm = ChatOllama(
+    base_url="http://192.168.100.91:11434",
+    temperature=0.1,
+    model="gemma3:27b",
+    verbose=True,
+    num_predict=1024)
 # # environment setting
+
 config = {
     "observation": {
         "type": "Kinematics",
@@ -95,7 +106,6 @@ env = RecordVideo(
 env.unwrapped.set_record_video_wrapper(env)
 obs, info = env.reset()
 env.render()
-env.unwrapped.automatic_rendering_callback = env.unwrapped.get_wrapper_attr("video_recorder").capture_frame()
 # scenario and driver agent setting
 if not os.path.exists('results-db/'):
     os.mkdir('results-db')
