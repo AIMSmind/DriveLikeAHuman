@@ -1,8 +1,17 @@
 # flake8: noqa
 TRAFFIC_RULES = """
-1. Try to keep a safe distance to the car in front of you.
-2. If there is no safe decision, just slowing down.
-3. DONOT change lane frequently. If you want to change lane, double-check the safety of vehicles on target lane.
+1. Try to always keep a safe distance to the car in front of you, the safe distance is 1.5 times distance of car length.
+2. If you want to change lane, double-check the safety of vehicles on target lane.
+3. It is very important to keep your distance, but do not decelerate unless you are to close to other vehicles in front of you in your lane and also cars that are close or in front of you from other lanes.
+4. If car is close behind you you do not need to decelerate, pay attention to cars in front of you regarding deceleration.
+5. Consider changing lane to avoid other vehicles, but do not at any circumstances change lane, if vehicle in target lane is near you,double-check the safety of changing lane to target lane.
+6. DO NOT answer with tool code at any point of time!
+7. If there are no cars close in lane next to current lane, consider changing lane.
+8. Do not stop at anytime, it is forbidden on highway!
+9. If you are a lot of faster then vehicle in your lane that is in front of you, consider to decelerate or change lane if that is safe, to avoid collision, double-check the safety of vehicles on target lane.
+10. When changing line always double-check and be super careful, do not change lanes if there is car in target lane that is near you ahead or behind, take your speed and the speed and distance of vehicles in target lane into consideration.
+11. If there are no surrounding vehicles, consider to accelerate.
+12. Always check if action can result in collision, and minimize chances for collision with other vehicles.
 """
 
 POSSIBLE_ADD_RULES = """
@@ -20,7 +29,7 @@ DECISION_CAUTIONS = """
 5. If you verify a decision is unsafe, you should start a new one and verify its safety again from scratch.
 """
 
-SYSTEM_MESSAGE_PREFIX = """You are ChatGPT, a large language model trained by OpenAI. 
+SYSTEM_MESSAGE_PREFIX = """You are large language model. 
 You are now act as a mature driving assistant, who can give accurate and correct advice for human driver in complex urban driving scenarios. 
 
 TOOLS:

@@ -49,7 +49,6 @@ elif OPENAI_CONFIG['OPENAI_API_TYPE'] == 'openai':
     )
 
 # base setting
-vehicleCount = 15
 # llm = LlamaCpp(
 #     n_gpu_layers=-1,
 #     model_path="/mnt/a4ceb600-eb8a-411c-ac16-e68b8312a0c5/aims/PycharmProjects/reports-service/language_models/Llama-3.1-WhiteRabbitNeo-2-8B-Q6_K_L.gguf",
@@ -70,13 +69,13 @@ vehicleCount = 15
 #     verbose=True)
 
 llm = ChatOllama(
-    base_url="http://192.168.100.91:11434",
-    temperature=0.1,
-    model="gemma3:27b",
+    base_url="http://192.168.100.49:11434",
+    temperature=0,
+    model="gemma3:12b-it-q8_0",
     verbose=True,
     num_predict=1024)
 # # environment setting
-
+vehicleCount = 15
 config = {
     "observation": {
         "type": "Kinematics",
@@ -90,6 +89,10 @@ config = {
         "type": "DiscreteMetaAction",
         "target_speeds": np.linspace(0, 32, 9),
     },
+    "lanes_count": 6,
+    "scaling": 8,
+    "screen_width": 1700,  # [px]
+    "screen_height": 300,  # [px]
     "duration": 40,
     "vehicles_density": 2,
     "show_trajectories": True,

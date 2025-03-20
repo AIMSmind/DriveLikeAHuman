@@ -79,7 +79,7 @@ class DriverAgent:
                 The decision you made LAST time step was `{last_step_action}`. Your explanation was `{last_step_explanation}`. 
                 Here is the current scenario: \n ```json\n{self.sce.export2json()}\n```\n. 
                 Please make decision for the `ego` car. You have to describe the state of the `ego`, then analyze the possible actions, and finally output your decision. 
-
+                
                 There are several rules you need to follow when you drive on a highway:
                 {TRAFFIC_RULES}
 
