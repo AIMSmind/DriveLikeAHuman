@@ -69,7 +69,7 @@ elif OPENAI_CONFIG['OPENAI_API_TYPE'] == 'openai':
 #     verbose=True)
 
 llm = ChatOllama(
-    base_url="http://192.168.100.49:11434",
+    base_url="http://192.168.100.52:11434",
     temperature=0,
     model="gemma3:12b-it-q8_0",
     verbose=True,
@@ -89,7 +89,7 @@ config = {
         "type": "DiscreteMetaAction",
         "target_speeds": np.linspace(0, 32, 9),
     },
-    "lanes_count": 6,
+    "lanes_count": 4,
     "scaling": 8,
     "screen_width": 1700,  # [px]
     "screen_height": 300,  # [px]

@@ -75,10 +75,10 @@ class DriverAgent:
         with get_openai_callback() as cb:
             self.agent.run(
                 f"""
-                You, the 'ego' car, are now driving a car on a highway. You have already drive for {self.sce.frame} seconds.
+                You, the 'ego' car, are now driving a car on a highway. You have already driven for {self.sce.frame} seconds.
                 The decision you made LAST time step was `{last_step_action}`. Your explanation was `{last_step_explanation}`. 
                 Here is the current scenario: \n ```json\n{self.sce.export2json()}\n```\n. 
-                Please make decision for the `ego` car. You have to describe the state of the `ego`, then analyze the possible actions, and finally output your decision. 
+                Please make decision for the `ego` car. You have to describe the state of the `ego` and other present vehicles while not ignoring information, then analyze possible actions, and finally output your decision. 
                 
                 There are several rules you need to follow when you drive on a highway:
                 {TRAFFIC_RULES}
@@ -86,7 +86,7 @@ class DriverAgent:
                 Here are your attentions points:
                 {DECISION_CAUTIONS}
                 
-                Let's think step by step. Once you made a final decision, output it in the following format: \n
+                Let's think step by step. Once you made a final decision, output it in the following format (DO NOT use tool codes): \n
                 ```
                 Final Answer: 
                     "decision":{{"ego car's decision, ONE of the available actions"}},
@@ -97,6 +97,7 @@ class DriverAgent:
             )
         print(cb)
         print('[cyan]Final decision:[/cyan]')
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n")
         print(self.ch.memory[-1])
         self.dataCommit()
 
