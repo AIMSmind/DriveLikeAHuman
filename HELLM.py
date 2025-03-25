@@ -86,7 +86,7 @@ config = {
         "see_behind": True,
     },
     "action": {
-        "type": "DiscreteMetaAction",
+        "type": "ContinuousAction",
         "target_speeds": np.linspace(0, 32, 9),
     },
     "lanes_count": 4,
@@ -97,6 +97,8 @@ config = {
     "vehicles_density": 2,
     "show_trajectories": True,
     "render_agent": True,
+    "policy_frequency": 5,
+    "simulation_frequency": 5,
 }
 
 print(gym.envs.registry.keys())
@@ -130,6 +132,7 @@ output = None
 done = truncated = False
 frame = 0
 try:
+    print(env.action_space.sample())
     while not (done or truncated):
         sce.upateVehicles(obs, frame)
         DA.agentRun(output)
@@ -137,7 +140,7 @@ try:
         output = outputParser.agentRun(da_output)
         env.render()
         env.unwrapped.automatic_rendering_callback = env.video_recorder.capture_frame()
-        obs, reward, done, info, _ = env.step(output["action_id"])
+        obs, reward, done, info, _ = env.step(np.array([output["acceleration"], output["angle"]], dtype=np.float32))
         print(output)
         frame += 1
 finally:

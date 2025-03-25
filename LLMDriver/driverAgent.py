@@ -75,7 +75,7 @@ class DriverAgent:
         with get_openai_callback() as cb:
             self.agent.run(
                 f"""
-                You, the 'ego' car, are now driving a car on a highway. You have already driven for {self.sce.frame} seconds.
+                You, the 'ego' car, are now driving a car on a highway. You have already driven for {self.sce.frame} seconds. You have 0.5 seconds to next decision making.
                 The decision you made LAST time step was `{last_step_action}`. Your explanation was `{last_step_explanation}`. 
                 Here is the current scenario: \n ```json\n{self.sce.export2json()}\n```\n. 
                 Please make decision for the `ego` car. You have to describe the state of the `ego` and other present vehicles while not ignoring information, then analyze possible actions, and finally output your decision. 
@@ -115,6 +115,8 @@ class DriverAgent:
         elif len(splitted) == 1:
             output['thoughts'] = splitted[0]
             output['answer'] = ""
+
+        print("BBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
         return output
 
     def dataCommit(self):

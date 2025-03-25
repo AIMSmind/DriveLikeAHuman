@@ -1,11 +1,13 @@
 # flake8: noqa
 TRAFFIC_RULES = """
-1. Safe distance is considered to be the distance at which you can avoid collision on time in case that the surrounding vehicles change speed.
-2. Keeping safe distance to vehicles in the same lane is first priority. ALWAYS keep a safe distance to them!.
-3. Sudden breaking is forbidden unless it is the only option to prevent collision and keep safe distance.
-4. Before changing lanes be sure that the safe distance is not violated by doing this action. Check for EVERY vehicle.
-5. Going too slow is forbidden if you dont have a reason for it.
-6. If the surrounding lanes are clear you can consider changing lanes while following rule 4 to avoid a collision instead of decelerating.
+1. Going outside of the road is STRICTLY FORBIDDEN!!
+2. You must ALWAYS travel in one lane except when changing lanes.
+3. Safe distance is considered to be the distance at which you can avoid collision on time in case that the surrounding vehicles change speed.
+4. Keeping safe distance to vehicles in the same lane is first priority. ALWAYS keep a safe distance to them!.
+5. Sudden breaking is forbidden unless it is the only option to prevent collision and keep safe distance.
+6. Before changing lanes be sure that the safe distance is not violated by doing this action. Check for EVERY vehicle.
+7. Going too slow is forbidden if you dont have a reason for it.
+8. If the surrounding lanes are clear you can consider changing lanes while following rule 4 to avoid a collision instead of decelerating.
 """
 
 AAAA = """
@@ -22,6 +24,7 @@ AAAA = """
 12. Always check if action can result in collision, and minimize chances for collision with other vehicles.
 13. If ALL important vehicles are more than 10 times distance of car length away from you, you can ignore them and consider accelerating until the distance becomes smaller.
 14. Pay VERY close attention to which lane you are in and how much lanes there are. Keep one numbering system for lanes.
+    11. If you aren't sure if changing lanes will result in a collision it is better to decelerate.
 15. Before changing lanes calculate and double-check distances between ego and every car in that lane and ONLY change the lane if all distances are safe and verify in which lane you are in. If you don't do this it is very likely changing lanes will result in collision. THIS IS VERY IMPORTANT!"""
 
 POSSIBLE_ADD_RULES = """
@@ -34,19 +37,19 @@ DECISION_CAUTIONS = """
 1. DONOT finish the task until you have a final answer. You must output a decision when you finish this task. Your final output decision must be unique and not ambiguous. For example you cannot say "I can either keep lane or accelerate at current time".
 2. You can only use tools mentioned before to help you make decision. DONOT fabricate any other tool name not mentioned.
 3. Remember what tools you have used, DONOT use the same tool repeatedly.
-3. You need to know your available actions and available lanes before you make any decision.
+3. You need to know your available lanes before you make any decision.
 4. Once you have a decision, you should check the safety with all the vehicles affected by your decision. Once it's safe, stop using tools and output it.
 5. If you verify a decision is unsafe, you should start a new one and verify its safety again from scratch.
-6. DO NOT EVER answer with tool code at any point of time!
+6. DO NOT EVER answer with tool code at any point in time!
 7. VERY closely examine and double-check in which direction should you change lanes when you decide to do it.
-8. It is very important to give action id that is corresponding to the action name.
 9. Double-check you are in the same lane as you said in you analysis!
-10. Confirm that every decision you make is in line with your previous analysis!
-11. If you aren't sure if changing lanes will result in a collision it is better to decelerate.
+10. Confirm that every decision you make is in line with your analysis!
+11. Closely examine and calculate your steering angle. Angle is calculated relative to your current orientation.
+
 """
 
 SYSTEM_MESSAGE_PREFIX = """You are large language model. 
-You are now act as a mature driving assistant, who can give accurate and correct advice for human driver in complex urban driving scenarios. 
+You are now acting as a mature driving assistant, who can give accurate and correct advice for human driver in complex urban driving scenarios. 
 
 TOOLS:
 ------
@@ -78,7 +81,7 @@ When you have a final answer, you MUST use the format:
 Thought: I now know the final answer, then summary why you have this answer
 Final Answer: the final answer to the original input question"""
 SYSTEM_MESSAGE_SUFFIX = """
-The driving task usually invovles many steps. You can break this task down into subtasks and complete them one by one. 
+The driving task usually involves many steps. You can break this task down into subtasks and complete them one by one. 
 There is no rush to give a final answer unless you are confident that the answer is correct.
 Answer the following questions as best you can. Begin! 
 
