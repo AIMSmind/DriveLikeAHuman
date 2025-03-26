@@ -28,6 +28,8 @@ class Vehicle:
     speedx: float = 0.0
     speedy: float = 0.0
     presence: bool = False
+    heading: float = 0.0
+    ang_off: float = 0.0
 
     def clear(self) -> None:
         self.lane_id = ''
@@ -36,14 +38,18 @@ class Vehicle:
         self.speedx = 0.0
         self.speedy = 0.0
         self.presence = False
+        self.heading = 0.0
+        self.ang_off = 0.0
 
     def updateProperty(
-        self, x: float, y: float, vx: float, vy: float
+        self, x: float, y: float, vx: float, vy: float, heading: float, ang_off: float
     ) -> None:
         self.x = x
         self.y = y
         self.speedx = vx
         self.speedy = vy
+        self.heading = heading
+        self.ang_off = ang_off
         laneIdx = round(y/4.0)
         self.lane_id = 'lane_' + str(laneIdx)
 
@@ -63,4 +69,6 @@ class Vehicle:
             # can not be serialized by JSON
             'lane position': round(float(self.x), 2),
             'speed': round(float(self.speed), 2),
+            'heading': round(float(self.heading), 2),
+            'angular offset': round(float(self.ang_off), 2),
         }

@@ -7,7 +7,10 @@ TRAFFIC_RULES = """
 5. Sudden breaking is forbidden unless it is the only option to prevent collision and keep safe distance.
 6. Before changing lanes be sure that the safe distance is not violated by doing this action. Check for EVERY vehicle.
 7. Going too slow is forbidden if you dont have a reason for it.
-8. If the surrounding lanes are clear you can consider changing lanes while following rule 4 to avoid a collision instead of decelerating.
+8. If the surrounding lanes are clear you can consider changing lanes while following rule 6 instead of decelerating.
+9. If you aren't changing lanes, you must be aligned with the direction of the lane you are in! Steering angle directly adds to your heading. Angle offset is the angle between your heading and the direction of the lane you are in.
+10. Try to stay in center of the lane.
+11. Consider changing lanes if it could prevent sudden breaking. Always follow rule 6.
 """
 
 AAAA = """

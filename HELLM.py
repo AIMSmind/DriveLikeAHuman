@@ -79,7 +79,7 @@ vehicleCount = 15
 config = {
     "observation": {
         "type": "Kinematics",
-        "features": ["presence", "x", "y", "vx", "vy"],
+        "features": ["presence", "x", "y", "vx", "vy", "heading", "ang_off"],
         "absolute": True,
         "normalize": False,
         "vehicles_count": vehicleCount,

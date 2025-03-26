@@ -34,6 +34,8 @@ class Scenario:
                 lane_id TEXT,
                 speedx REAL,
                 speedy REAL,
+                heading REAL,
+                angular_offset REAL,
                 PRIMARY KEY (frame, id));"""
         )
         cur.execute(
@@ -81,15 +83,15 @@ class Scenario:
                 vid = 'ego'
             else:
                 vid = 'veh' + str(i)
-            presence, x, y, vx, vy = observation[i]
+            presence, x, y, vx, vy, heading, ang_off = observation[i]
             if presence:
                 veh = self.vehicles[vid]
                 veh.presence = True
-                veh.updateProperty(x, y, vx, vy)
+                veh.updateProperty(x, y, vx, vy, heading, ang_off)
                 cur.execute(
-                    '''INSERT INTO vehINFO VALUES (?,?,?,?,?,?,?);''',
+                    '''INSERT INTO vehINFO VALUES (?,?,?,?,?,?,?,?,?);''',
                     (frame, vid, float(x), float(y),
-                     veh.lane_id, float(vx), float(vy))
+                     veh.lane_id, float(vx), float(vy), float(heading), float(ang_off))
                 )
             else:
                 self.vehicles[vid].clear()
