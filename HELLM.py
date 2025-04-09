@@ -24,6 +24,7 @@ from LLMDriver.customTools import (
     isDecelerationSafe,
     isActionSafe,
 )
+import sqlite3
 
 OPENAI_CONFIG = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
 
@@ -69,13 +70,14 @@ elif OPENAI_CONFIG['OPENAI_API_TYPE'] == 'openai':
 #     verbose=True)
 
 llm = ChatOllama(
-    base_url="http://192.168.100.52:11434",
+    base_url="http://192.168.100.98:11434",
     temperature=0,
     model="gemma3:12b-it-q8_0",
     verbose=True,
     num_predict=1024)
 # # environment setting
 vehicleCount = 15
+num_of_lanes = 4
 config = {
     "observation": {
         "type": "Kinematics",
@@ -89,11 +91,11 @@ config = {
         "type": "ContinuousAction",
         "target_speeds": np.linspace(0, 32, 9),
     },
-    "lanes_count": 4,
+    "lanes_count": num_of_lanes,
     "scaling": 8,
     "screen_width": 1700,  # [px]
     "screen_height": 300,  # [px]
-    "duration": 40,
+    "duration": 60,
     "vehicles_density": 2,
     "show_trajectories": True,
     "render_agent": True,
@@ -128,20 +130,57 @@ toolModels = [
 ]
 DA = DriverAgent(llm, toolModels, sce, verbose=True)
 outputParser = OutputParser(sce, llm)
-output = None
-done = truncated = False
-frame = 0
-try:
-    print(env.action_space.sample())
-    while not (done or truncated):
-        sce.upateVehicles(obs, frame)
-        DA.agentRun(output)
-        da_output = DA.exportThoughts()
-        output = outputParser.agentRun(da_output)
-        env.render()
-        env.unwrapped.automatic_rendering_callback = env.video_recorder.capture_frame()
-        obs, reward, done, info, _ = env.step(np.array([output["acceleration"], output["angle"]], dtype=np.float32))
-        print(output)
-        frame += 1
-finally:
-    env.close()
+num_episodes = sum_of_frames = 0
+finished = parsing = crash = 0 #types 0 1 and 2
+type = 0
+
+#print(env.action_space.sample())
+while num_episodes < 100:
+    output = None
+    done = truncated = False
+    frame = 0
+    type = -1
+
+    try:
+        while not (done or truncated or frame == 60):
+            sce.upateVehicles(obs, frame)
+            DA.agentRun(output)
+            da_output = DA.exportThoughts()
+            output = outputParser.agentRun(da_output)
+            env.render()
+            env.unwrapped.automatic_rendering_callback = env.video_recorder.capture_frame()
+            obs, reward, done, info, _ = env.step(np.array([output["acceleration"], output["angle"]], dtype=np.float32))
+            print(output)
+            frame += 1
+
+            if(sce.check_ego_out_of_bounds() <= -1 or sce.check_ego_out_of_bounds() >= num_of_lanes):
+                break
+    except Exception:
+        type = 1
+    finally:
+        frame -= 1
+        num_episodes += 1
+        sum_of_frames += frame
+        if frame==60: type = 0
+        if type==-1: type = 2
+
+        if(type == 0): finished += 1
+        elif(type == 1): parsing += 1
+        else: crash += 1
+
+        conn = sqlite3.connect(database)
+        cur = conn.cursor()
+        cur.execute("DROP TABLE IF EXISTS decisionINFO")
+        cur.execute("DROP TABLE IF EXISTS vehINFO")
+        conn.commit()
+        conn.close()
+
+        obs, info = env.reset()
+        sce = Scenario(vehicleCount, database)
+        DA = DriverAgent(llm, toolModels, sce, verbose=True)
+        outputParser = OutputParser(sce, llm)
+
+        print(num_episodes, sum_of_frames/num_episodes, "finished", finished, "parsing_err", parsing, "crashed", crash)
+
+
+env.close()

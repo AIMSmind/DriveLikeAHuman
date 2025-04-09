@@ -27,7 +27,7 @@ class OutputParser:
                 description=f"output the value(float) of acceleration in m/s^2. Negative acceleration is deceleration."),
             ResponseSchema(
                 name="angle",
-                description=f"output the value(float) of steering angle in radian. Positive angles represent steering to the right, negative to the left."),
+                description=f"output the value(float) of steering angle in radian. Positive angles represent steering to the right, negative to the left. This value represents the CHANGE in heading."),
             ResponseSchema(
                 name="explanation",
                 description=f"Explain for the driver why you make such decision in 40 words.")

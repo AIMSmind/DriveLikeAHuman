@@ -1,9 +1,10 @@
 # flake8: noqa
 TRAFFIC_RULES = """
-1. Going outside of the road is STRICTLY FORBIDDEN!!
+1. Going outside of the road is STRICTLY FORBIDDEN!! When you find yourself outside of the road you must IMMEDIATELY return to one of the existing lanes.
+2. NEVER attempt to change lane to an invalid one! ALWAYS check if the lane is valid!!!
 2. You must ALWAYS travel in one lane except when changing lanes.
-3. Safe distance is considered to be the distance at which you can avoid collision on time in case that the surrounding vehicles change speed.
-4. Keeping safe distance to vehicles in the same lane is first priority. ALWAYS keep a safe distance to them!.
+3. Safe distance is considered to be the distance at which you can avoid collision ON TIME in case that the surrounding vehicles suddenly break or accelerate. Calculate the safe distance to closest vehicles.
+4. Keeping safe distance to vehicles in the same lane is FIRST PRIORITY! ALWAYS keep a safe distance to them!. Calculate the time needed to keep safe distance in case of sudden breaking!
 5. Sudden breaking is forbidden unless it is the only option to prevent collision and keep safe distance.
 6. Before changing lanes be sure that the safe distance is not violated by doing this action. Check for EVERY vehicle.
 7. Going too slow is forbidden if you dont have a reason for it.
@@ -11,6 +12,7 @@ TRAFFIC_RULES = """
 9. If you aren't changing lanes, you must be aligned with the direction of the lane you are in! Steering angle directly adds to your heading. Angle offset is the angle between your heading and the direction of the lane you are in.
 10. Try to stay in center of the lane.
 11. Consider changing lanes if it could prevent sudden breaking. Always follow rule 6.
+12. Consider accelerating if after that you will be at safe distance.
 """
 
 AAAA = """
@@ -48,7 +50,7 @@ DECISION_CAUTIONS = """
 9. Double-check you are in the same lane as you said in you analysis!
 10. Confirm that every decision you make is in line with your analysis!
 11. Closely examine and calculate your steering angle. Angle is calculated relative to your current orientation.
-
+12. DO NOT assume that lane number is a typo or that it is incorrect, tho it could mean that it is outside of the road, always check how many lanes there are!
 """
 
 SYSTEM_MESSAGE_PREFIX = """You are large language model. 

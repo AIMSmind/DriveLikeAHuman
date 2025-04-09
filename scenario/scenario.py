@@ -99,6 +99,9 @@ class Scenario:
         conn.commit()
         conn.close()
 
+    def check_ego_out_of_bounds(self):
+        return int(self.vehicles['ego'].lane_id[5])
+
     def export2json(self):
         scenario = {}
         scenario['lanes'] = []
